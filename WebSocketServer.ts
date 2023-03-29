@@ -1,5 +1,7 @@
 export function WebSocketServer(options : Deno.ServeOptions | Deno.ServeTlsOptions, handler : (webSocket : WebSocket) => void) {
-    Deno.serve(options, (request) => {
+    Deno.serve({...options, onListen({hostname, port}) {
+        console.log(`Listening on ws://${hostname}:${port}/ (WebSocketServer)`);
+    }}, (request) => {
         if (request.headers.get("upgrade") != "websocket") {
             return new Response(null, { status: 501 });
         }
@@ -10,6 +12,16 @@ export function WebSocketServer(options : Deno.ServeOptions | Deno.ServeTlsOptio
         return response
     })
 }
+
+// WebSocketServer({port: 8081}, (webSocket) => {
+//     webSocket.addEventListener('open', () => {
+//         console.log('WebSocket open!');
+//         webSocket.send('Ping from Server!');
+//     })
+//     webSocket.addEventListener('message', (event) => {
+//         console.log(event);
+//     })
+// })
 
 // export class WebSocketServer {
 //     public CLOSED : number
