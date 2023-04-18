@@ -1,4 +1,4 @@
-export function WebSocketServer(options : Deno.ServeOptions | Deno.ServeTlsOptions, handler : (webSocket : WebSocket) => void) {
+export function WebSocketServer(options : Deno.ServeOptions | Deno.ServeTlsOptions, handler : (webSocket : WebSocket, request? : Request) => void) {
     Deno.serve({...options, onListen({hostname, port}) {
         console.log(`Listening on ws://${hostname}:${port}/ (WebSocketServer)`);
     }}, (request) => {
@@ -7,7 +7,7 @@ export function WebSocketServer(options : Deno.ServeOptions | Deno.ServeTlsOptio
         }
         const {socket, response} = Deno.upgradeWebSocket(request)
 
-        handler(socket)
+        handler(socket, request)
 
         return response
     })
